@@ -1,0 +1,25 @@
+Description:
+"make" text files/scripts based on ./configure results
+
+Files:
+build-aux/text-templates-gen
+build-aux/text-templates-gen-ttinc
+m4/_ax_text_tpl.m4
+
+Depends-on:
+
+configure.ac:
+_AX_TEXT_TPL_INIT
+_AX_TEXT_TPL_SUBST([ac_aux_dir])
+_AX_TEXT_TPL_SUBST([gen_makefile_ttinc], [${ac_aux_dir}/text-templates-gen-ttinc])
+_AX_TEXT_TPL_SUBST([gen_makefile_inc],   [${ac_aux_dir}/text-templates-gen])
+
+Makefile.am:
+
+Include:
+
+License:
+GPLv2+
+
+Maintainer:
+Pavel Raiskup <praiskup@redhat.com>

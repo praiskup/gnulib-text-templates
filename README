@@ -1,0 +1,52 @@
+Generate (make) text files based on ./configure results
+=======================================================
+
+This is Gnulib [1] "plug-in" and it's purpose is to move this code into Gnulib
+codebase once we reach certain acceptable code quality.
+
+The long-term desire is to implement something equivalent within Automake
+project [2] (at least automatic text-file generator, or maybe more general
+approach like plug-in support).
+
+Warning:  This is unstable API/code; use on your own risk!
+
+How to use
+----------
+
+We consider that your project already deepends on Gnulib;  if this is not truth
+please look at Gnulib's (gnulib-tool) documentation.
+
+1. Use this project as git submodule [3]:
+
+   $ git submodule add --name gnulib-text-templates THIS_GIT
+
+2. Put some code into your bootstrap file:
+
+   gnulib-tool --local-dir gnulib-text-templates \
+               --import text-templates
+   # Pre-generate Makefile.ttinc stubs.
+   build-aux/text-templates-gen-ttinc
+
+3. Put code into your main Makefile.am:
+
+   include Makefile.ttinc
+
+4. Prepare some source code:
+
+   $ mkdir bin
+   $ cat > bin/hello.in <<EOF
+   #! /bin/sh
+   echo "hello from @bindir@"
+   EOF
+
+5. Administrivia:
+
+   $ echo bin >> .ttincdirs
+   $ echo 'bin SCRIPTS hello' >> bin/Makefile.ttinc.in
+
+Links
+-----
+
+[1] https://www.gnu.org/software/gnulib/
+[2] https://www.gnu.org/software/automake/
+[3] https://git-scm.com/docs/git-submodule

@@ -1,0 +1,58 @@
+#! /bin/sh
+
+# Generate Makefile.ttinc.
+# Copyright (C) 2015 Red Hat, Inc.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+target=Makefile.ttinc
+ttinc_in=Makefile.ttinc.in
+ttinc=Makefile.ttinc
+
+subdirs=`cat .ttincdirs`
+
+echo "
+EXTRA_DIST += \
+	$target \
+	.ttincdirs \
+	\$(ac_aux_dir)/text-templates-gen \
+	\$(ac_aux_dir)/text-templates-gen-ttinc
+
+Makefile.ttinc: .ttincdirs
+	\$(gen_makefile_ttinc)
+" > "$target"
+
+for dir in $subdirs
+do
+    echo "
+    \$(srcdir)/$dir/$ttinc: \$(srcdir)/$dir/$ttinc_in
+	\$(gen_makefile_inc) $dir > \$@
+include \$(srcdir)/$dir/$ttinc
+EXTRA_DIST += \$(srcdir)/$dir/$ttinc_in
+" >> "$target"
+done
+
+for dir in $subdirs
+do
+    touch "$dir/$ttinc"
+done
+
+sleep 1
+
+# In case this is called for the first time.
+for dir in $subdirs
+do
+    touch "$dir/$ttinc_in"
+done

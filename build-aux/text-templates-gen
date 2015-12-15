@@ -1,0 +1,85 @@
+#! /bin/bash
+
+# Generate Makefile.ttinc.
+# Copyright (C) 2015 Red Hat, Inc.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+test $# -gt 0 && cd "$1" && shift
+
+files=
+files_in=
+
+data=
+scripts=
+
+full_primaries=' '
+
+echo '/.gitignore' > .gitignore
+
+while read dir primary file
+do
+    files+="$file
+"
+    files_in="$files_in %D%/$file.in"
+
+    echo "$file" >> ".gitignore"
+    case $primary in
+        SCRIPTS)
+            eval "${dir}_$primary+=' %D%/$file '"
+            scripts+=" %D%/$file "
+            ;;
+        DATA)
+            eval "${dir}_DATA+=' %D%/$file '"
+            data+=" %D%/$file "
+            ;;
+    esac
+    full_primaries=$full_primaries" ${dir}_$primary "
+done < <(grep -v '^#' < Makefile.ttinc.in)
+
+for i in $full_primaries
+do
+    eval echo "$i += \$$i"
+done
+
+for t in data script
+do
+    var=$data
+    action='$(text_tpl_gen)'
+    case $t in
+        data)
+            ;;
+        script)
+            var=$scripts
+            action='$(text_tpl_gen_script)'
+            ;;
+    esac
+
+
+    for i in $var
+    do
+        echo "$i: \$(srcdir)/$i.in \$(text_tpl_deps)"
+        echo "	$action"
+    done
+done
+
+clean=
+for i in $full_primaries
+do
+    eval clean='" $clean $'"$i"' "'
+done
+echo "CLEANFILES += $clean"
+
+echo "EXTRA_DIST += $files_in"
