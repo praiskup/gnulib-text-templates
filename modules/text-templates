@@ -4,7 +4,7 @@ Description:
 Files:
 build-aux/text-templates-gen
 build-aux/text-templates-gen-ttinc
-m4/_ax_text_tpl.m4
+m4/text-templates.m4
 
 Depends-on:
 
