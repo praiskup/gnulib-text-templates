@@ -9,10 +9,10 @@ m4/text-templates.m4
 Depends-on:
 
 configure.ac:
-_AX_TEXT_TPL_INIT
-_AX_TEXT_TPL_SUBST([ac_aux_dir])
-_AX_TEXT_TPL_SUBST([gen_makefile_ttinc], [${ac_aux_dir}/text-templates-gen-ttinc])
-_AX_TEXT_TPL_SUBST([gen_makefile_inc],   [${ac_aux_dir}/text-templates-gen])
+gl_TEXT_TPL_INIT
+gl_TEXT_TPL_SUBST([ac_aux_dir])
+gl_TEXT_TPL_SUBST([gen_makefile_ttinc], [${ac_aux_dir}/text-templates-gen-ttinc])
+gl_TEXT_TPL_SUBST([gen_makefile_inc],   [${ac_aux_dir}/text-templates-gen])
 
 Makefile.am:
 
